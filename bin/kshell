@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# Script to open an usable terminal in a pod with an app label
+# Inspired by @hubt
+ 
+if [ "$1" = "" ] || [ "$2" = "" ]; then
+  echo "Usage: kshell <namespace> <app>"
+  exit 1
+fi
+COLUMNS=`tput cols`
+LINES=`tput lines`
+TERM=xterm
+KUBECMD=/kubernetes/cluster/kubectl.sh
+POD=`$KUBECMD --namespace=$1 get po -l app=$2 --no-headers | awk '{ print $1 }'`
+
+echo "Connecting to $POD ..."
+$KUBECMD --namespace=$1 exec -i -t $POD env COLUMNS=$COLUMNS LINES=$LINES TERM=$TERM bash
