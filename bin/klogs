@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Script to print logs from a pod with an app label
+#
+
+if [ "$1" = "" ] || [ "$2" = "" ]; then
+    echo "Usage: $0 <namespace> <app>"
+    exit 1
+fi
+
+KUBECMD=/kubernetes/cluster/kubectl.sh
+POD=`$KUBECMD --namespace=$1 get po -l app=$2 --no-headers | awk '{ print $1 }'`
+
+echo "Logs from $POD ..."
+$KUBECMD --namespace=$1 logs $POD
